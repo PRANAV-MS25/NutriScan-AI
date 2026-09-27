@@ -1,32 +1,18 @@
-
-
-#our folder structure is like this:
-# Backend
-# ├── api
-# │   ├── track_food.py
-# ├── utility
-# │   ├── ds.py
-# │   ├── food_macros.json
-# ├── input_images
-# ├── processed_images
-# ├──   |--> ├── 1.jpeg
-# ├──   |--> ├── 2.jpeg
-# ├──   |--> ├── 3.jpeg
-# ├──   |--> ├── 4.jpeg........
-# ├── models
-# │   ├── ml.py
-# │main.py
-# └── requirements.txt
-
 from flask import Flask
 from flask_cors import CORS
 from api.track_food import track_food_bp
 
 app = Flask(__name__)
-CORS(app, origins=["https://foodieai-1-0dcz.onrender.com"])
 
-# Register the blueprint
+# Allow both local frontend and deployed production frontend
+CORS(app, origins=[
+    "http://localhost:5173", 
+    "http://127.0.0.1:5173", 
+    "https://foodieai-1-0dcz.onrender.com"
+])
+
+# Register the blueprint (you can optionally add a url_prefix if needed, e.g., url_prefix='/api')
 app.register_blueprint(track_food_bp)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5000)
