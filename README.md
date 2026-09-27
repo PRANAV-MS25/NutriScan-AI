@@ -40,3 +40,19 @@ Developed by **Pranav M**
 1. **Clone the repository**:
    ```bash
    git clone [https://github.com/PRANAV-MS25/NutriScan-AI.git](https://github.com/PRANAV-MS25/NutriScan-AI.git)
+
+2.Run the Frontend:
+
+Bash
+cd Frontend
+npm install
+npm run dev
+
+3. Run the Backend:
+
+Bash
+cd Backend
+pip install -r requirements.txt
+python main.py
+
+4. 
