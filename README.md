@@ -55,4 +55,16 @@ cd Backend
 pip install -r requirements.txt
 python main.py
 
-4. 
+-------
+
+## 📸 UI Preview & Dashboard Walkthrough
+
+| **Smart Dashboard** | **AI Food Recognition** | **Nutrition Analytics** |
+| :---: | :---: | :---: |
+| ![Dashboard](./dashboard.png) | ![Food AI](./Food%20AI.png) | ![Nutrition](./Nutrition.png) |
+| *Overview of daily intake and metrics* | *Dynamic visual meal recognition scanner* | *Detailed macro breakdowns and targets* |
+
+| **Community Hub** | **Workout & Fitness Planner** |
+| :---: | :---: |
+| ![Community](./Community.png) | ![Exercise](./Exercise.png) |
+| *Engage, share thoughts, and connect* | *Manage workouts and active routines* |
