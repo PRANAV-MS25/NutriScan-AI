@@ -1,53 +1,73 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const Community = () => {
-  const [comment, setComment] = useState('');
-  const [posts, setPosts] = useState([
-    { author: 'Sarah K.', text: 'Just completed my 2000 kcal goal for today with Foodie AI!', time: '2 hours ago' },
-    { author: 'Rahul M.', text: 'The food scanner correctly recognized my Paneer Butter Masala macros!', time: '5 hours ago' },
-  ]);
+export default function Community() {
+  const [comments, setComments] = useState([]);
+  const [newComment, setNewComment] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handlePost = () => {
-    if (!comment.trim()) return;
-    setPosts([{ author: 'You', text: comment, time: 'Just now' }, ...posts]);
-    setComment('');
+  useEffect(() => {
+    fetch('http://127.0.0.1:5000/api/comments')
+      .then(res => res.json())
+      .then(data => {
+        if (data.comments) setComments(data.comments);
+      })
+      .catch(err => console.error("Error fetching comments:", err));
+  }, []);
+
+  const handlePostComment = async (e) => {
+    e.preventDefault();
+    if (!newComment.trim()) return;
+
+    setLoading(true);
+    try {
+      const response = await fetch('http://127.0.0.1:5000/api/comments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: newComment })
+      });
+      const data = await response.json();
+      if (data.comments) {
+        setComments(data.comments);
+        setNewComment('');
+      }
+    } catch (err) {
+      console.error("Error posting comment:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="w-full space-y-6">
-      {/* Input Box */}
-      <div className="bg-[#181f2e] border border-gray-800 rounded-xl p-4 space-y-3">
-        <textarea
-          rows="3"
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-          placeholder="Share your thoughts, progress, or recipe tips..."
-          className="w-full bg-[#0b0f17] border border-gray-700 text-white p-3 rounded-lg focus:border-emerald-500 outline-none text-sm resize-none"
-        />
-        <div className="flex justify-end">
-          <button
-            onClick={handlePost}
-            className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-semibold px-6 py-2 rounded-lg hover:opacity-90 transition text-sm"
+    <div className="max-w-4xl mx-auto px-4 py-10 space-y-8">
+      <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-md">
+        <h2 className="text-2xl font-bold text-slate-800 mb-4">Community Comments</h2>
+        
+        <form onSubmit={handlePostComment} className="space-y-4">
+          <textarea
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            placeholder="Share your thoughts or feedback..."
+            className="w-full p-4 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-sky-500 text-slate-700"
+            rows="3"
+          />
+          <button 
+            type="submit"
+            disabled={loading}
+            className="bg-sky-600 hover:bg-sky-500 text-white font-bold px-6 py-3 rounded-xl shadow transition"
           >
-            Post Update
+            {loading ? 'Posting...' : 'Post Comment'}
           </button>
-        </div>
-      </div>
+        </form>
 
-      {/* Community Feed */}
-      <div className="space-y-3">
-        {posts.map((post, idx) => (
-          <div key={idx} className="bg-[#181f2e] border border-gray-800 rounded-xl p-4 space-y-1">
-            <div className="flex justify-between items-center text-xs text-gray-400">
-              <span className="font-semibold text-emerald-400">{post.author}</span>
-              <span>{post.time}</span>
+        <div className="mt-6 space-y-3">
+          {comments.map((c) => (
+            <div key={c.id} className="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+              <p className="text-sm text-slate-800">{c.text}</p>
+              <span className="text-[10px] text-slate-400 font-semibold">— {c.author}</span>
             </div>
-            <p className="text-sm text-gray-200">{post.text}</p>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );
-};
-
-export default Community;
+}
